@@ -35,12 +35,12 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
         source $OS_FILE
         echo ""
         if [ "$ID" == "ubuntu" ] || [ "$ID_LIKE" == "debian" ]; then
-            sudo apt-get install neovim python3-venv python3-pip
+            sudo apt-get install neovim python3-venv python3-pip tree jq
         elif [ "$ID" == "arch" ]; then
-            sudo pacman -S neovim python-pip
+            sudo pacman -S neovim python-pip tree jq
         elif [ "$ID" == "rhel" ]; then
             sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-            sudo yum install -y neovim python3-neovim
+            sudo yum install -y neovim python3-neovim tree jq
         fi
     else
         # Attempt building from source / other generic install methods
@@ -56,18 +56,20 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
     fi
 
     # CCat
-    echo -e "${bold}CCat:${normal}"
-    mkdir ccat
-    cd ccat
-    wget https://github.com/jingweno/ccat/releases/download/v1.1.0/linux-amd64-1.1.0.tar.gz
-    tar -zxvf linux-amd64-1.1.0.tar.gz
-    ln -s `pwd`/linux-amd64-1.1.0/ccat /usr/bin/ccat
-    cd $SCRIPT_DIR
+    if [ ! -f "/usr/bin/ccat" ]; then
+        echo -e "${bold}CCat:${normal}"
+        mkdir ccat
+        cd ccat
+        wget https://github.com/jingweno/ccat/releases/download/v1.1.0/linux-amd64-1.1.0.tar.gz
+        tar -zxvf linux-amd64-1.1.0.tar.gz
+        mv `pwd`/linux-amd64-1.1.0/ccat /usr/bin/ccat
+        cd $SCRIPT_DIR
+    fi
 
     # Font setup
-    cp font/AnomalyMono.otf ~/.local/share/fonts/
-
-    # TODO: Complete this
+    if [ -d "~/.local/share/fonts" ]; then
+        cp font/AnomalyMono.otf ~/.local/share/fonts/
+    fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     # Mac OSX
     echo -e $BREAK
@@ -94,26 +96,48 @@ fi
 
 cd $SCRIPT_DIR
 echo -e $BREAK
-# TODO: Add/verify symlinking for tmux, vimrc, bashrc, etc
-ln -s `pwd`/bashrc ~/.bashrc
-ln -s `pwd`/vimrc ~/.vimrc
-ln -s `pwd`/tmux.conf ~/.tmux.conf
-source ~/.bashrc
+
+read -p "Remove existing rc files and update? (y/n) " yn
+case $yn in
+    [Yy]* )
+        rm ~/.bashrc ~/.vimrc ~/.tmux.conf
+        ln -s `pwd`/bashrc ~/.bashrc
+        ln -s `pwd`/vimrc ~/.vimrc
+        ln -s `pwd`/tmux.conf ~/.tmux.conf
+        ;;
+    [Nn]* )
+        ;;
+esac
+
 
 # Neovim setup
+mkdir -p ~/.config/nvim/
+rm -f ~/.config/nvim/init.vim
 ln -s ~/.vimrc ~/.config/nvim/init.vim
 
 # Non OS specific setup:
 #
 # - Vundle
 #
-git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+if [ ! -d ~/.vim/bundle/Vundle.vim ]; then
+    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+fi
+
 vim +PluginInstall +qall
+rm -f ~/extend-syntax.vim
+ln -s ~/.vim/bundle/earthbound-themes/vim/extend-syntax.vim ~
+
 #
 # - Git
 #
-echo -e "${bold}Git setup${normal}"
+echo -e "$BREAK"
+echo -e "${bold}Git setup${normal}\n"
 $SCRIPT_DIR/git-setup.sh
 
 # Cleanup (remove all subfolders)
 rm -r -- */
+
+echo -e "$BREAK\n"
+echo -e "${bold}${green}All done!${normal}${nc}"
+
+source ~/.bashrc
