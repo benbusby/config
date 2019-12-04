@@ -36,7 +36,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
         echo ""
         if [ "$ID" == "ubuntu" ] || [ "$ID_LIKE" == "debian" ]; then
             sudo apt-get install neovim python3-venv python3-pip tree jq
-        elif [ "$ID" == "arch" ]; then
+        elif [ "$ID_LIKE" == "arch" ]; then
             sudo pacman -S neovim python-pip tree jq
         elif [ "$ID" == "rhel" ]; then
             sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm

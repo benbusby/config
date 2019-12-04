@@ -122,8 +122,7 @@ alias vim='nvim'
 alias lll='ls -thor'
 alias l='ls -thorg'
 alias gti='git'
-alias cat='~/custom/ccat/ccat --bg=dark'
-alias shc='~/custom/shc/src/shc'
+alias cat='ccat --bg=dark'
 alias la='ls -A'
 alias l='ls -CF'
 alias rm='rm -f'
@@ -135,7 +134,6 @@ alias 2='cd ../../'
 alias 3='cd ../../../'
 alias 4='cd ../../../../'
 alias 5='cd ../../../../../'
-alias micro='~/custom/micro'
 alias dirsize="du -sh ./*"
 alias 8675309="confirm sudo rm -rf /home/$USER/*"
 alias stonks="echo 'One sec plz...' && wget -q https://raw.githubusercontent.com/pstadler/ticker.sh/master/ticker.sh && chmod +x ticker.sh && ./ticker.sh AAPL && rm ./ticker.sh"
