@@ -1,0 +1,19 @@
+[pack]
+    windowMemory = 1g
+    threads = 1
+[core]
+    bigFileThreshold = 1g
+[http]
+    postBuffer = 524288000
+[user]
+    name = GITNAME
+	email = GITEMAIL
+[filter "lfs"]
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
+[color "diff"]
+    meta = magenta bold
+    new = green bold
+    old = red italic
