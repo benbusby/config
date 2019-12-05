@@ -62,7 +62,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
         cd ccat
         wget https://github.com/jingweno/ccat/releases/download/v1.1.0/linux-amd64-1.1.0.tar.gz
         tar -zxvf linux-amd64-1.1.0.tar.gz
-        mv `pwd`/linux-amd64-1.1.0/ccat /usr/bin/ccat
+        sudo mv `pwd`/linux-amd64-1.1.0/ccat /usr/bin/ccat
         cd $SCRIPT_DIR
     fi
 
