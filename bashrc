@@ -62,15 +62,21 @@ normal=$(tput sgr0)
 nc='\033[0m'
 
 if [ "$color_prompt" = yes ]; then
-    PS1='[ ${debian_chroot:+($debian_chroot)}\[\033[38;5;226m\]\e[1m\w\e[0m\[\033[00m\] ]\n➤ '
-    #PS1='┌[ ${debian_chroot:+($debian_chroot)}\[\033[38;5;226m\]\e[1m\w\e[0m\[\033[00m\] ]\n└──> '
-    #PS1='[ ${debian_chroot:+($debian_chroot)}\w ]\n➤ '
-    #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\n└──> '
+    PROMPT_DIRTRIM=4
+    CMD_PROMPT="$LIGHT_GREEN\$ $DEFAULT_COLOR"
+    if [ ! $UID = 0 ]; then
+        PS1="$LIGHT_GREEN[ $LIGHT_CYAN\u@\h$LIGHT_GREEN:$YELLOW\w$LIGHT_GREEN ]"
+    else
+        PS1="$LIGHT_RED[ $LIGHT_RED\u@\h$LIGHT_RED:$YELLOW\w$LIGHT_RED ]"
+        CMD_PROMPT="$LIGHT_RED# $DEFAULT_COLOR"
+    fi
+
+    PS1+="$LIGHT_PURPLE\$(git_branch)\$(parse_git_dirty)$DEFAULT_COLOR\n$CMD_PROMPT"
+    export PS1
 else
-    #PS1='[ \u:\w  ]\n➤ '
-    PS1='[ \w ]\n➤ '
-    #PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
+
 unset color_prompt force_color_prompt
 
 # If this is an xterm set the title to user@host:dir
