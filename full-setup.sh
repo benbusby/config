@@ -1,10 +1,6 @@
 #!/bin/bash
 
-# Basic config setup for vim, tmux, bash, etc
-# Still needs:
-# - font
-# - gitconfig setup
-# - ?
+# Basic config setup for vim, tmux, bash, git, etc
 
 bold=$(tput bold)
 ital=$(tput sitm)
@@ -21,26 +17,23 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 # Pre-run set up
 echo -e "Setting up..."
 
-# Anomaly Mono font
-wget -q https://raw.githubusercontent.com/benbusby/anomaly-mono/master/AnomalyMono.otf -P ./font/
-
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
     # Linux
     echo -e $BREAK
     echo -e "${green}${bold}Linux${nc} detected...${normal}\n"
     OS_FILE=/etc/os-release
-    if [ -f "$OS_FILE" ]; then
+    if [[ -f "$OS_FILE" ]]; then
         # Use package manager to install packages
         cat $OS_FILE
         source $OS_FILE
         echo ""
-        if [ "$ID" == "ubuntu" ] || [ "$ID_LIKE" == "debian" ]; then
-            sudo apt-get install neovim python3-venv python3-pip tree jq
-        elif [ "$ID_LIKE" == "arch" ]; then
-            sudo pacman -S neovim python-pip tree jq
-        elif [ "$ID" == "rhel" ]; then
+        if [[ "$ID" == "ubuntu" ]] || [[ "$ID_LIKE" == "debian" ]]; then
+            sudo apt-get install neovim python3-venv python3-pip tree jq git
+        elif [[ "$ID_LIKE" == "arch" ]]; then
+            sudo pacman -S neovim python-pip tree jq git
+        elif [[ "$ID" == "rhel" ]]; then
             sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-            sudo yum install -y neovim python3-neovim tree jq
+            sudo yum install -y neovim python3-neovim tree jq git
         fi
     else
         # Attempt building from source / other generic install methods
@@ -56,7 +49,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
     fi
 
     # CCat
-    if [ ! -f "/usr/bin/ccat" ]; then
+    if [[ ! -f "/usr/bin/ccat" ]]; then
         echo -e "${bold}CCat:${normal}"
         mkdir ccat
         cd ccat
@@ -67,8 +60,8 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
     fi
 
     # Font setup
-    if [ -d "~/.local/share/fonts" ]; then
-        cp font/AnomalyMono.otf ~/.local/share/fonts/
+    if [[ -d "~/.local/share/fonts" ]] && [[ "$1" == "--include-font" ]]; then
+        wget -q https://raw.githubusercontent.com/benbusby/anomaly-mono/master/AnomalyMono.otf -P ~/.local/share/fonts/
     fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     # Mac OSX
@@ -86,7 +79,10 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     brew install neovim ccat git python3
 
     # Font setup
-    cp font/AnomalyMono.otf ~/Library/Fonts/
+
+    if [[ "$1" == "--include-font" ]]; then
+        wget -q https://raw.githubusercontent.com/benbusby/anomaly-mono/master/AnomalyMono.otf -P ~/Library/Fonts
+    fi
 
     # TODO: Complete this
 else
@@ -119,7 +115,7 @@ ln -s ~/.vimrc ~/.config/nvim/init.vim
 #
 # - Vundle
 #
-if [ ! -d ~/.vim/bundle/Vundle.vim ]; then
+if [[ ! -d "~/.vim/bundle/Vundle.vim" ]]; then
     git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 fi
 
@@ -133,6 +129,9 @@ ln -s ~/.vim/bundle/earthbound-themes/vim/extend-syntax.vim ~
 echo -e "$BREAK"
 echo -e "${bold}Git setup${normal}\n"
 $SCRIPT_DIR/git-setup.sh
+
+git clone --depth=1 https://github.com/romkatv/gitstatus.git ~/gitstatus
+cp $SCRIPT_DIR/gitstatus.prompt.sh ~/gitstatus/gitstatus.prompt.sh
 
 # Cleanup (remove all subfolders)
 rm -r -- */

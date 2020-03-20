@@ -1,6 +1,4 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
-# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
-# for examples
 
 BLACK="\[\033[0;30m\]"
 DARK_GRAY="\[\033[1;30m\]"
@@ -73,11 +71,6 @@ if [ -n "$force_color_prompt" ]; then
 	color_prompt=
     fi
 fi
-
-bold=$(tput bold)
-yellow='\033[1;33m'
-normal=$(tput sgr0)
-nc='\033[0m'
 
 if [ "$color_prompt" = yes ]; then
     PROMPT_DIRTRIM=4
@@ -160,7 +153,6 @@ alias 4='cd ../../../../'
 alias 5='cd ../../../../../'
 alias dirsize="du -sh ./*"
 alias 8675309="confirm sudo rm -rf /home/$USER/*"
-alias stonks="echo 'One sec plz...' && wget -q https://raw.githubusercontent.com/pstadler/ticker.sh/master/ticker.sh && chmod +x ticker.sh && ./ticker.sh AAPL && rm ./ticker.sh"
 
 if [ "$OSTYPE" == "linux-gnu" ]; then
     alias asdfasdf="systemctl suspend"
@@ -212,3 +204,5 @@ export LESS_TERMCAP_so=$'\E[01;44;33m' # begin reverse video
 export LESS_TERMCAP_se=$'\E[0m'        # reset reverse video
 export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
 export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
+
+source ~/gitstatus/gitstatus.prompt.sh
